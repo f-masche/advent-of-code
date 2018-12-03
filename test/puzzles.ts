@@ -5,7 +5,7 @@ import { dirname, relative, join } from 'path';
 import { readFileSync } from 'fs';
 
 const tests = [];
-const files = glob('src/*/**/*.ts', { sync: true });
+const files = glob('2018/*/**/*.ts', { sync: true });
 
 for (const file of files) {
   const filePath = dirname(file);
