@@ -1,27 +1,20 @@
-const entryRegexp = /^\[\d+\-\d+\-\d+\s+\d+:(\d+)\]\s(.+)$/
+const entryRegexp = /(\d+)(?!.*\d)/
+const { map, maxBy } = require('lodash');
 
 function addSleep(start, end, table) {
-  for (let i = start; i < end; i++) {
-    table[i] += 1;
-  }
-  return table;
+  return map(table, (x, i) => (i >= start && i < end) ? x + 1 : x);
 };
 
 module.exports = {
   parseEntry(entry) {
-    const matches = entry.match(entryRegexp);
-    const minute  = Number(matches[1]);
+    const lastNumber = +entry.match(entryRegexp)[1];
 
-    let action;
-    let guardId;
-
-    if (matches[2] === 'wakes up') {
-      return { minute, action: 'wakeup' };
-    } else if (matches[2] === 'falls asleep') {
-      return { minute, action: 'sleep' };
+    if (entry.endsWith('wakes up')) {
+      return { minute: lastNumber, action: 'wakeup' };
+    } else if (entry.endsWith('falls asleep')) {
+      return { minute: lastNumber, action: 'sleep' };
     } else {
-      const guardId = matches[2].match(/^\w+\s+#(\d+)/)[1];
-      return { minute, action: 'change', guardId };
+      return { action: 'change', guardId: lastNumber };
     }
   },
 
@@ -34,7 +27,7 @@ module.exports = {
       if (entry.action === 'sleep') {
         sleepStart = entry.minute;
       } else if (entry.action === 'wakeup') {
-        addSleep(sleepStart, entry.minute, sleepByGuard[guardId]);
+        sleepByGuard[guardId] = addSleep(sleepStart, entry.minute, sleepByGuard[guardId]);
       } else {
         guardId = entry.guardId;
         if (!sleepByGuard[guardId]) {
@@ -46,19 +39,7 @@ module.exports = {
     return sleepByGuard;
   },
 
-  getMaxSleepMinute(sleep) {
-    let maxSleepMinute = 0;
-    let maxSleep = 0;
-
-    for (let i = 0; i < sleep.length; i++) {
-      if (sleep[i] > maxSleep) {
-        maxSleepMinute = i;
-        maxSleep = sleep[i];
-      }
-    }
-    return {
-      minute: maxSleepMinute,
-      sleep: maxSleep
-    };
+  getMaxSleepMinute(sleepMinutes) {
+    return maxBy(map(sleepMinutes, (sleep, minute) => ({ sleep, minute })), x => x.sleep);
   }
 }

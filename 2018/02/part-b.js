@@ -37,11 +37,11 @@ function run(lines) {
     threeTimes: 0
   });
 
-  return String(result.twice * result.threeTimes);
+  return result.twice * result.threeTimes;
 }
 
 const puzzle = new Puzzle('02 B');
-puzzle.addTest('input/test-b.txt', '12');
+puzzle.addTest('input/test-b.txt', 12);
 puzzle.setInput('input/input-b.txt');
 puzzle.setSolution(run);
 

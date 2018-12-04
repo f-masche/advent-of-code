@@ -7,7 +7,7 @@ function run(input) {
     for (const otherLine of lines) {
       if (line === otherLine) continue;
       const same = intersection(line, otherLine);
-      if (same.length === 4) {
+      if (same.length === line.length - 1) {
         return same.join('');
       }
     }

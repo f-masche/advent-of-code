@@ -1,25 +1,15 @@
 const Puzzle = require('../puzzle');
+const { map, maxBy, sum, chain } = require('lodash');
 const { parseEntry, getSleepByGuard, addSleep, getMaxSleepMinute } = require('./lib');
 
 function getGuardWithMaxSleepMinute(sleepByGuard) {
-  let maxGuardId;
-  let maxMinute;
-  let maxSleep = 0;
-
-  for (const guardId of Object.keys(sleepByGuard)) {
-    const { minute, sleep } = getMaxSleepMinute(sleepByGuard[guardId]);
-
-    if (sleep > maxSleep) {
-      maxSleep = sleep;
-      maxMinute = minute;
-      maxGuardId = guardId;
-    }
-  }
-
-  return {
-    guardId: maxGuardId,
-    minute: maxMinute
-  }
+  return chain(sleepByGuard)
+    .map((value, key) => ({
+      guardId: key,
+      ...getMaxSleepMinute(value)
+    }))
+    .maxBy(x => x.sleep)
+    .value();
 }
 
 function run(input) {
@@ -27,11 +17,11 @@ function run(input) {
   const sleepByGuard = getSleepByGuard(entries);
   const { minute, guardId } = getGuardWithMaxSleepMinute(sleepByGuard);
 
-  return String(minute * guardId);
+  return minute * guardId;
 }
 
 const puzzle = new Puzzle('04 B');
-puzzle.addTest('input/test-a.txt', '4455');
+puzzle.addTest('input/test-a.txt', 4455);
 puzzle.setInput('input/input-a.txt');
 puzzle.setSolution(run);
 
