@@ -1,32 +1,27 @@
 const Puzzle = require('../puzzle');
+const { map, find } = require('lodash');
 
 function run(input) {
   const visited = {};
+  const values = map(input, x => +x);
 
-  let result = {
-    sum: 0,
-    duplicates: []
-  };
+  let sum = 0;
+  let duplicate;
 
-  while(!result.duplicates.length) {
-    result = input.reduce((acc, line) => {
-      acc.sum += parseInt(line, 10);
-
-      if (visited[acc.sum]) {
-        acc.duplicates.push(acc.sum)
-      }
-
-      visited[acc.sum] = true;
-      return acc;
-    }, result);
+  while(!duplicate) {
+    duplicate = find(values, value => {
+      sum += value;
+      if (visited[sum]) return true;
+      visited[sum] = true;
+    });
   }
 
-  return result.duplicates[0].toString();
+  return sum;
 }
 
 const puzzle = new Puzzle('01 B');
 puzzle.setInput('input/input-b.txt');
-puzzle.addTest('input/test-b.txt', '10');
+puzzle.addTest('input/test-b.txt', 10);
 puzzle.setSolution(run);
 
 module.exports = puzzle;

@@ -1,13 +1,12 @@
 const Puzzle = require('../puzzle');
+const { map, sum } = require('lodash');
 
 function run(input) {
-  return input.reduce((total, line) =>
-    total + parseInt(line, 10)
-  , 0).toString();
+  return sum(map(input, x => +x));
 }
 
 const puzzle = new Puzzle('01 A');
-puzzle.addTest('input/test-a.txt', '3');
+puzzle.addTest('input/test-a.txt', 3);
 puzzle.setInput('input/input-a.txt');
 puzzle.setSolution(run);
 
