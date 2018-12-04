@@ -1,28 +1,13 @@
 const Puzzle = require('../puzzle');
-
-const claimRegexp = /^(#\d+)\s*@\s*(\d+),(\d+):\s*(\d+)x(\d+)$/;
+const { map, find } = require('lodash');
 
 function parseClaim(line) {
-  const matches = line.match(claimRegexp);
-  return {
-    id: matches[1],
-    x: Number(matches[2]),
-    y: Number(matches[3]),
-    x2: Number(matches[2]) + Number(matches[4]) - 1,
-    y2: Number(matches[3]) + Number(matches[5]) - 1
-  };
+  const [ id, x, y, width, height ] = map(line.match(/\d+/g), l => +l);
+  return { id, x, y, x2: x + width - 1, y2: y + height - 1 };
 }
 
 function getFabric(size) {
-  const fabric = Array(size);
-
-  for (let y = 0; y < size; y++) {
-    fabric[y] = Array(size);
-    for (let x = 0; x < size; x++) {
-      fabric[y][x] = 0;
-    }
-  }
-  return fabric;
+  return map(Array(size), () => Array(size).fill(0));
 }
 
 function run(lines) {
@@ -37,26 +22,20 @@ function run(lines) {
     }
   }
 
-  for (const claim of claims) {
-    let overlapped = false;
-
-    for (let y = claim.y; y <= claim.y2 && !overlapped; y++) {
-      for (let x = claim.x; x <= claim.x2 && !overlapped; x++) {
+  return find(claims, claim => {
+    for (let y = claim.y; y <= claim.y2; y++) {
+      for (let x = claim.x; x <= claim.x2; x++) {
         if (fabric[y][x] > 1) {
-          overlapped = true;
+          return false;
         }
       }
     }
-
-    if (!overlapped) {
-      return claim.id;
-    }
-  }
-  return '';
+    return true;
+  }).id;
 }
 
 const puzzle = new Puzzle('03 B');
-puzzle.addTest('input/test-a.txt', '#3');
+puzzle.addTest('input/test-a.txt', 3);
 puzzle.setInput('input/input-a.txt');
 puzzle.setSolution(run);
 
