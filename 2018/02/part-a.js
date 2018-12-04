@@ -1,6 +1,6 @@
-import Puzzle from '../puzzle';
+const Puzzle = require('../puzzle');
 
-function run(lines: string[]) {
+function run(lines) {
   for (const line of lines) {
     for (const otherLine of lines) {
       if (line === otherLine) continue;
@@ -23,9 +23,9 @@ function run(lines: string[]) {
   return '';
 }
 
-const puzzle = new Puzzle('2.2');
-puzzle.addTest('input/test1.txt', 'fgij');
-puzzle.setInput('input/input1.txt');
+const puzzle = new Puzzle('02 A');
+puzzle.addTest('input/test-a.txt', 'fgij');
+puzzle.setInput('input/input-a.txt');
 puzzle.setSolution(run);
 
-export default puzzle;
+module.exports = puzzle;

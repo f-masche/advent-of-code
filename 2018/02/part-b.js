@@ -1,6 +1,6 @@
-import Puzzle from '../puzzle';
+const Puzzle = require('../puzzle');
 
-function run(lines: string[]) {
+function run(lines) {
   const result = lines.map((line) => {
     const counts = {};
     const result = {
@@ -40,9 +40,9 @@ function run(lines: string[]) {
   return String(result.twice * result.threeTimes);
 }
 
-const puzzle = new Puzzle('2.1');
-puzzle.addTest('input/test2.txt', '12');
-puzzle.setInput('input/input2.txt');
+const puzzle = new Puzzle('02 B');
+puzzle.addTest('input/test-b.txt', '12');
+puzzle.setInput('input/input-b.txt');
 puzzle.setSolution(run);
 
-export default puzzle;
+module.exports = puzzle;
