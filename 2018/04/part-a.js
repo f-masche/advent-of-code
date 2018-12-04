@@ -1,5 +1,5 @@
 const Puzzle = require('../puzzle');
-const { parseEntry, compareDate,  getSleepByGuard, addSleep, getMaxSleepMinute } = require('./lib');
+const { parseEntry, getSleepByGuard, addSleep, getMaxSleepMinute } = require('./lib');
 
 function getMaxSleepGuard(sleepByGuard) {
   let max = 0;
@@ -17,8 +17,7 @@ function getMaxSleepGuard(sleepByGuard) {
 }
 
 function run(input) {
-  const entries = input.map(parseEntry)
-    .sort(compareDate)
+  const entries = input.sort().map(parseEntry);
 
   const sleepByGuard = getSleepByGuard(entries);
   const maxSleepGuardId = getMaxSleepGuard(sleepByGuard);
