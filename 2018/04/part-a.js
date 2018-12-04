@@ -1,38 +1,35 @@
 const Puzzle = require('../puzzle');
- // [1518-11-01 00:00] Guard #10 begins shift
+const { parseEntry, compareDate,  getSleepByGuard, addSleep, getMaxSleepMinute } = require('./lib');
 
-const entryRegexp = /^\[(\d+\-\d+\-\d+\s+\d+:\d+)\]\s(.+)$/
+function getMaxSleepGuard(sleepByGuard) {
+  let max = 0;
+  let maxGuardId;
 
-function parseEntry(entry) {
-  const matches = entry.match(entryRegexp);
-  const date = matches[1].replace(' ', 'T') + ':00';
-
-  let action;
-  let guardId;
-
-  if (matches[2] === 'wakes up') {
-    action = 'wakeup';
-  } else if (matches[2] === 'falls asleep') {
-    action = 'sleep';
-  } else {
-    action = 'change';
-    guardId = matches[2].match(/^\w+\s+#(\d+)/)[1];
+  for(const guardId of Object.keys(sleepByGuard)) {
+    const sleep = sleepByGuard[guardId].reduce((sum, time) => sum + time, 0);
+    if (sleep > max) {
+      max = sleep;
+      maxGuardId = guardId;
+    }
   }
 
-  return {
-    date: new Date(date),
-    action,
-    guardId
-  }
+  return maxGuardId;
 }
 
 function run(input) {
-  console.log(input.map(parseEntry))
+  const entries = input.map(parseEntry)
+    .sort(compareDate)
+
+  const sleepByGuard = getSleepByGuard(entries);
+  const maxSleepGuardId = getMaxSleepGuard(sleepByGuard);
+  const { minute } = getMaxSleepMinute(sleepByGuard[maxSleepGuardId]);
+
+  return String(minute * maxSleepGuardId);
 }
 
 const puzzle = new Puzzle('04 A');
 puzzle.addTest('input/test-a.txt', '240');
-// puzzle.setInput('input/input-a.txt');
+puzzle.setInput('input/input-a.txt');
 puzzle.setSolution(run);
 
 module.exports = puzzle;

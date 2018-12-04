@@ -4,7 +4,7 @@ const { dirname, relative, join } = require('path');
 const { readFileSync } = require('fs');
 
 const tests = [];
-const files = glob('2018/*/**/*.js', { sync: true });
+const files = glob('2018/*/**/part*.js', { sync: true });
 
 for (const file of files) {
   const filePath = dirname(file);
