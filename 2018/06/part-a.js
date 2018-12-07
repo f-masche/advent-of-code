@@ -1,5 +1,5 @@
 const Puzzle = require('../puzzle');
-const { map, max, minBy, chain, filter, flatten } = require('lodash');
+const { map, max, minBy, chain, filter, flatten, difference, sumBy } = require('lodash');
 
 function distance(point, otherPoint) {
   return Math.abs(point[0] - otherPoint[0])
@@ -36,12 +36,11 @@ function run(input) {
     }
   }
 
-  Array.from(edgePoints);
 
-  const centerPoints = filter(points, point => !edgePoints.has(point));
-  const counts = map(centerPoints, point => filter(flatten(area), p => p === point).length)
+  const centerPoints = difference(points, Array.from(edgePoints));
+  const markedPoints = flatten(area);
 
-  return max(counts);
+  return max(map(centerPoints, point => sumBy(markedPoints, p => p === point)))
 }
 
 const puzzle = new Puzzle('06 A');
